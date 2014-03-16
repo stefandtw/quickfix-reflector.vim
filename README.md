@@ -31,8 +31,8 @@ Example: The quickfix entry `Missing ; at: xyz` can be used to replace in a line
 Links
 =====
 
-[Github](https://github.com/stefandtw/quickfix-reflector.vim)
-[vim.org](http://www.vim.org/scripts/script.php?script_id=4890)
+* [Github](https://github.com/stefandtw/quickfix-reflector.vim)
+* [vim.org](http://www.vim.org/scripts/script.php?script_id=4890)
 
 
 Installation
