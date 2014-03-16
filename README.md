@@ -28,6 +28,13 @@ If the quickfix entry contains only part of a line, replacement should work as l
 Example: The quickfix entry `Missing ; at: xyz` can be used to replace in a line `a = xyz`. However, it cannot be used in a line `xyz = 1+xyz` because it is not clear which xyz would need to be replaced
 
 
+Links
+=====
+
+[Github](https://github.com/stefandtw/quickfix-reflector.vim)
+[vim.org](http://www.vim.org/scripts/script.php?script_id=4890)
+
+
 Installation
 ============
 
