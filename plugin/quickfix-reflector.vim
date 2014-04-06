@@ -140,20 +140,28 @@ endfunction
 function! s:FindCommonContext(qfOriginal, qfChangedVersion, lineInFile)
 	let startOfChange = 0
 	let endOfChange = 0
-	for n in range(strlen(a:qfOriginal))
+	let endOfChangeInChangedVersion = 0
+	let qfOriginalLength = strlen(a:qfOriginal)
+	let qfChangedVersionLength = strlen(a:qfChangedVersion)
+	let maxLength = max([qfOriginalLength, qfChangedVersionLength])
+	for n in range(maxLength)
 		if a:qfOriginal[n] !=# a:qfChangedVersion[n]
 			let startOfChange = n
 			break
 		endif
 	endfor
+	let qfOriginalReversed = a:qfOriginal 
+	let qfChangedVersionReversed = a:qfChangedVersion
 	let changedVersionOffset = strlen(a:qfChangedVersion) - strlen(a:qfOriginal)
-	for n in reverse(range(strlen(a:qfOriginal)))
-		if a:qfOriginal[n] !=# a:qfChangedVersion[n + changedVersionOffset]
-			let endOfChange = n
+	for n in range(maxLength)
+		if a:qfOriginal[qfOriginalLength - 1 - n] !=# a:qfChangedVersion[qfChangedVersionLength - 1 - n]
+			let endOfChange = qfOriginalLength - 1 - n
+			let endOfChangeInChangedVersion = qfChangedVersionLength - 1 - n
 			break
 		endif
 	endfor
-	let minReplacement = a:qfChangedVersion[startOfChange : endOfChange + changedVersionOffset]
+	let endOfChange = max([endOfChange, startOfChange - changedVersionOffset - 1])
+	let minReplacement = s:StringRange(a:qfChangedVersion, startOfChange, endOfChangeInChangedVersion)
 
 	let longest = ''
 	let startOfCommonPart = -1

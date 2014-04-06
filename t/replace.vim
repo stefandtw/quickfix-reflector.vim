@@ -167,6 +167,57 @@ describe 'changing quickfix entries'
 		call delete(tmpFile)
 	end
 
+	it 'replaces similar characters at the beginning'
+		let tmpFile = CreateTmpFile('t/3-lines.txt')
+		execute 'vimgrep /line 1/j ' . tmpFile
+		copen
+		1substitute/line/222line/
+		write
+		1substitute/222line/2line/
+		write
+		execute "normal! \<CR>"
+		Expect expand('%:p') ==# tmpFile
+		Expect getline(1) ==# '2line 1'
+		Expect getline(2) ==# 'line 2'
+		Expect getline(3) ==# 'line 3'
+		Expect &modified == 0
+		call delete(tmpFile)
+	end
+
+	it 'replaces similar characters at the end'
+		let tmpFile = CreateTmpFile('t/3-lines.txt')
+		execute 'vimgrep /line 1/j ' . tmpFile
+		copen
+		1substitute/$/222/
+		write
+		1substitute/22$//
+		write
+		execute "normal! \<CR>"
+		Expect expand('%:p') ==# tmpFile
+		Expect getline(1) ==# 'line 12'
+		Expect getline(2) ==# 'line 2'
+		Expect getline(3) ==# 'line 3'
+		Expect &modified == 0
+		call delete(tmpFile)
+	end
+
+	it 'replaces similar characters at the beginning and end'
+		let tmpFile = CreateTmpFile('t/3-lines.txt')
+		execute 'vimgrep /line 1/j ' . tmpFile
+		copen
+		1substitute/line 1/222line 1222/
+		write
+		1substitute/222line 1222/2line 12/
+		write
+		execute "normal! \<CR>"
+		Expect expand('%:p') ==# tmpFile
+		Expect getline(1) ==# '2line 12'
+		Expect getline(2) ==# 'line 2'
+		Expect getline(3) ==# 'line 3'
+		Expect &modified == 0
+		call delete(tmpFile)
+	end
+
 	function! CreateTmpFile(source)
 		let tmpFile = tempname()
 		execute 'edit ' . tmpFile
