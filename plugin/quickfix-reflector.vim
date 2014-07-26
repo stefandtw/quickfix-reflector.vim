@@ -1,3 +1,7 @@
+" necessary for using '\' line-continuation when starting vim -U NONE
+let s:originalCpo = &cpo
+set cpo&vim
+
 augroup quickfix_reflector
 	autocmd!
 	autocmd BufReadPost quickfix nested :call <SID>OnQuickfixInit()
@@ -201,5 +205,7 @@ endfunction
 function! s:StringRange(string, startIndex, endIndex)
 	return strpart(a:string, a:startIndex, a:endIndex - a:startIndex + 1)
 endfunction
+
+let &cpo = s:originalCpo
 
 " vim:ts=2:sw=2:sts=2
