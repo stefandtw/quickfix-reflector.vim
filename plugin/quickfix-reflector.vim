@@ -2,6 +2,11 @@
 let s:originalCpo = &cpo
 set cpo&vim
 
+let s:regexpEngine = '\%#=1'
+if v:version < 704
+	let s:regexpEngine = ''
+endif
+
 augroup quickfix_reflector
 	autocmd!
 	autocmd BufReadPost quickfix nested :call <SID>OnQuickfixInit()
@@ -175,7 +180,8 @@ function! s:FindCommonContext(qfOriginal, qfChangedVersion, lineInFile)
 		" file
 		" We need the old regex engine, because the new one doesn't always find the
 		" match in this case
-		let commonResult = matchlist(strpart(a:qfOriginal, n) . "\n" . a:lineInFile, '\%#=1\v^(.+).*\n.*\1')
+		let commonResult = matchlist(strpart(a:qfOriginal, n) . "\n" . a:lineInFile,
+			\ s:regexpEngine . '\v^(.+).*\n.*\1')
 		if commonResult == []
 			continue
 		endif
