@@ -54,6 +54,17 @@ describe 'the quickfix window'
 		quit
 		lclose
 	end 
+
+  it 'can handle problematic lines'
+		vimgrep /^/ t/problematic-lines.txt
+		copen
+		delete
+
+		write
+		" Just making sure there are no errors
+
+	end 
+
 end
 
 " vim:ts=2:sw=2:sts=2

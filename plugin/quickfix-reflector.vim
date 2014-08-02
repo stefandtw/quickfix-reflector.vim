@@ -43,16 +43,23 @@ function! s:OnWrite()
 		" Now find the line in the buffer using the quickfix description.
 		" Then use that line to create a pattern without that text so we can find
 		" the entry again after it has changed
-		let qfDescriptionTrimmed = substitute(entry.text, '\v^\s*', '', '')
+		" 
+		" Vim sometimes does not display the full line if it's very long
+		if strlen(entry.text) > 180
+			let qfDescription = strpart(entry.text, 0, 180)
+		else
+			let qfDescription = entry.text
+		endif
+		let qfDescriptionTrimmed = substitute(qfDescription, '\v^\s*', '', '')
 		let qfDescriptionEscaped = escape(qfDescriptionTrimmed, '/\')
-    let matchList = matchlist(qfBufferLines, '\v^(.*)\V' . qfDescriptionEscaped . '\v(.*)$')
+		let matchList = matchlist(qfBufferLines, '\v^(.*)\V' . qfDescriptionEscaped . '\v(.*)$')
 		" If there are multiple entries with the same description text we only
 		" want to use an entry once. So remove the matched line from the
 		" bufferLines we search through.
 		call remove(qfBufferLines, index(qfBufferLines, matchList[0]))
 		" Make a search pattern that will find a changed version of the line
 		let entry.markerPattern = '\V\^' . escape(matchList[1], '/\')
-		let entry.markerPatternForChanges = '\V\^' . escape(matchList[1], '/\') . '\(' . qfDescriptionEscaped . escape(matchList[2], '/\') . '\$' . '\)\@\!\(\.\*\)' . escape(matchList[2], '/\') . '\$'
+		let entry.markerPatternForChanges = '\V\^' . escape(matchList[1], '/\') . '\(' . qfDescriptionEscaped . escape(matchList[2], '/\') . '\$' . '\)\@\!\(\.\*\)\$'
 
 		" Now use the search patterns in the changed buffer
 		let lineNumberForChange = search(entry.markerPatternForChanges, 'cnw')
