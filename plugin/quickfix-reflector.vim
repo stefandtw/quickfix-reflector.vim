@@ -121,8 +121,7 @@ function! s:Replace(changes)
 	let successfulChanges = 0
 	for change in a:changes
 		let bufferWasListed = buflisted(change.qfEntry.bufnr)
-		tabnew
-		execute 'buffer ' . change.qfEntry.bufnr
+		execute 'tab sbuffer ' . change.qfEntry.bufnr
 		let originalFromQfEscaped = escape(change.originalFromQf, '/\')
 		let replacementFromQfEscaped = escape(change.replacementFromQf, '/\')
 		let lineInFileEscaped = escape(getline(change.qfEntry.lnum), '/\')
