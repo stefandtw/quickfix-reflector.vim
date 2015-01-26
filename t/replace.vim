@@ -218,6 +218,23 @@ describe 'changing quickfix entries'
 		call delete(tmpFile)
 	end
 
+	it 'changes lower case letters to upper case even if ignorecase is set'
+		set ignorecase
+		set smartcase
+		let tmpFile = CreateTmpFile('t/3-lines.txt')
+		execute 'vimgrep /line 1/j ' . tmpFile
+		copen
+		1substitute/line/LINE/
+		write
+		execute "normal! \<CR>"
+		Expect expand('%:p') ==# tmpFile
+		Expect getline(1) ==# 'LINE 1'
+		Expect getline(2) ==# 'line 2'
+		Expect getline(3) ==# 'line 3'
+		Expect &modified == 0
+		call delete(tmpFile)
+	end
+
 	function! CreateTmpFile(source)
 		let tmpFile = tempname()
 		execute 'edit ' . tmpFile

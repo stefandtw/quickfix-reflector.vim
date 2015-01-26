@@ -52,14 +52,14 @@ function! s:OnWrite()
 		endif
 		let qfDescriptionTrimmed = substitute(qfDescription, '\v^\s*', '', '')
 		let qfDescriptionEscaped = escape(qfDescriptionTrimmed, '/\')
-		let matchList = matchlist(qfBufferLines, '\v^(.*)\V' . qfDescriptionEscaped . '\v(.*)$')
+		let matchList = matchlist(qfBufferLines, '\C\v^(.*)\V' . qfDescriptionEscaped . '\v(.*)$')
 		" If there are multiple entries with the same description text we only
 		" want to use an entry once. So remove the matched line from the
 		" bufferLines we search through.
 		call remove(qfBufferLines, index(qfBufferLines, matchList[0]))
 		" Make a search pattern that will find a changed version of the line
-		let entry.markerPattern = '\V\^' . escape(matchList[1], '/\')
-		let entry.markerPatternForChanges = '\V\^' . escape(matchList[1], '/\') . '\(' . qfDescriptionEscaped . escape(matchList[2], '/\') . '\$' . '\)\@\!\(\.\*\)\$'
+		let entry.markerPattern = '\C\V\^' . escape(matchList[1], '/\')
+		let entry.markerPatternForChanges = '\C\V\^' . escape(matchList[1], '/\') . '\(' . qfDescriptionEscaped . escape(matchList[2], '/\') . '\$' . '\)\@\!\(\.\*\)\$'
 
 		" Now use the search patterns in the changed buffer
 		let lineNumberForChange = search(entry.markerPatternForChanges, 'cnw')
@@ -187,7 +187,7 @@ function! s:FindCommonContext(qfOriginal, qfChangedVersion, lineInFile)
 		" We need the old regex engine, because the new one doesn't always find the
 		" match in this case
 		let commonResult = matchlist(strpart(a:qfOriginal, n) . "\n" . a:lineInFile,
-			\ s:regexpEngine . '\v^(.+).*\n.*\1')
+			\ s:regexpEngine . '\C\v^(.+).*\n.*\1')
 		if commonResult == []
 			continue
 		endif
