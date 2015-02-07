@@ -52,18 +52,22 @@ function! s:OnWrite()
 		endif
 		let qfDescriptionTrimmed = substitute(qfDescription, '\v^\s*', '', '')
 		let qfDescriptionEscaped = escape(qfDescriptionTrimmed, '/\')
-		let matchList = matchlist(qfBufferLines, '\C\v^(.*)\V' . qfDescriptionEscaped . '\v(.*)$')
+		let patternForOriginalEntry = '\C\v^(.*)\V' . qfDescriptionEscaped . '\v(.*)$'
+		let matchList = matchlist(qfBufferLines, patternForOriginalEntry)
 		" If there are multiple entries with the same description text we only
 		" want to use an entry once. So remove the matched line from the
 		" bufferLines we search through.
 		call remove(qfBufferLines, index(qfBufferLines, matchList[0]))
 		" Make a search pattern that will find a changed version of the line
 		let entry.markerPattern = '\C\V\^' . escape(matchList[1], '/\')
+		if entry.valid == 0
+			let entry.markerPattern = patternForOriginalEntry
+		endif
 		let entry.markerPatternForChanges = '\C\V\^' . escape(matchList[1], '/\') . '\(' . qfDescriptionEscaped . escape(matchList[2], '/\') . '\$' . '\)\@\!\(\.\*\)\$'
 
 		" Now use the search patterns in the changed buffer
 		let lineNumberForChange = search(entry.markerPatternForChanges, 'cnw')
-		if lineNumberForChange
+		if lineNumberForChange && entry.valid == 1
 			let change = {}
 			let change.qfEntry = entry
 			let changeMatchList = matchlist(getline(lineNumberForChange), entry.markerPatternForChanges)

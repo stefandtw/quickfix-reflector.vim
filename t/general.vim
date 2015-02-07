@@ -65,6 +65,20 @@ describe 'the quickfix window'
 
 	end 
 
+  it 'ignores invalid lines'
+		compiler msvc
+		cgetfile t/invalid-qf-lines.c.out
+		1delete
+		1put
+
+		write
+
+		Expect getline(1) ==# '|| Project not selected to build for this solution configuration '
+		Expect getline(2) ==# '|| ------ Skipped Build: Project: game_pc, Configuration: Release x64 ------'
+		Expect getline(3) ==# '|| file1.cpp'
+		Expect getline(7) ==# 'issue5/c.out|15| some text here'
+	end 
+
 end
 
 " vim:ts=2:sw=2:sts=2
