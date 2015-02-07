@@ -2,6 +2,10 @@
 let s:originalCpo = &cpo
 set cpo&vim
 
+if !exists("g:qf_modifiable")
+  let g:qf_modifiable=1
+endif
+
 let s:regexpEngine = '\%#=1'
 if v:version < 704
 	let s:regexpEngine = ''
@@ -22,7 +26,9 @@ function! s:OnQuickfixInit()
 endfunction
 
 function! s:PrepareBuffer()
-	setlocal modifiable
+	if g:qf_modifiable == 1
+	  setlocal modifiable
+	endif
 	let s:qfBufferLines = getline(1, '$')
 endfunction
 

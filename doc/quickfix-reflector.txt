@@ -50,5 +50,15 @@ long as there is a substring of that line with at least three characters.
       `xyz = 1+xyz`
     because it is not clear which xyz would need to be replaced
 
+
+4. Options
+
+                                                              *g:qf_modifiable*
+If 1, automatically sets quickfix buffers 'modifiable'. If you prefer to do
+this manually, set the value to 0. Default: 1. Example: >
+  let g:qf_modifiable=1
+<
+
+
 ==============================================================================
 vim:tw=78:ts=8:ft=help:norl:

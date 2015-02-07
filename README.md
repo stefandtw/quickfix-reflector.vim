@@ -28,6 +28,16 @@ If the quickfix entry contains only part of a line, replacement should work as l
 Example: The quickfix entry `Missing ; at: xyz` can be used to replace in a line `a = xyz`. However, it cannot be used in a line `xyz = 1+xyz` because it is not clear which xyz would need to be replaced
 
 
+Options
+=======
+
+```
+let g:qf_modifiable=1
+```
+If 1, automatically sets quickfix buffers 'modifiable'. If you prefer to do
+this manually, set the value to 0. Default: 1.
+
+
 Links
 =====
 
