@@ -127,7 +127,8 @@ function! s:CompareEntryInBuffer(qfEntry1, qfEntry2)
 endfunction
 
 function! s:Replace(changes)
-	let previousBuffer = bufnr('%')
+	let switchbufOriginal = &switchbuf
+	let &switchbuf = ''
 	let successfulChanges = 0
 	for change in a:changes
 		let bufferWasListed = buflisted(change.qfEntry.bufnr)
@@ -152,6 +153,7 @@ function! s:Replace(changes)
 			execute 'silent! bdelete ' . change.qfEntry.bufnr
 		endif
 	endfor
+	let &switchbuf = switchbufOriginal
 	if successfulChanges < len(a:changes)
 		echohl WarningMsg
 		echomsg successfulChanges . '/' . len(a:changes) . ' changes applied. See lines marked [ERROR].'

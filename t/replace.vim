@@ -235,6 +235,20 @@ describe 'changing quickfix entries'
 		call delete(tmpFile)
 	end
 
+	it 'works if switchbuf is set and buffer is open'
+		let &switchbuf = 'useopen'
+		let tmpFile = CreateTmpFile('t/3-lines.txt')
+		split tmpFile
+		execute 'vimgrep /^/j ' . tmpFile
+		copen
+		1substitute/line 1/Line 1/
+		write
+		execute "normal! \<CR>"
+		Expect getline(1) ==# 'Line 1'
+		Expect &switchbuf == 'useopen'
+		call delete(tmpFile)
+	end
+
 	function! CreateTmpFile(source)
 		let tmpFile = tempname()
 		execute 'edit ' . tmpFile
