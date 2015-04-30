@@ -2,6 +2,8 @@ source plugin/quickfix-reflector.vim
 
 describe 'changing quickfix entries'
 	before
+		set noundofile
+		let g:qf_join_changes = 0
 	end
 
 	after
@@ -247,6 +249,67 @@ describe 'changing quickfix entries'
 		Expect getline(1) ==# 'Line 1'
 		Expect &switchbuf == 'useopen'
 		call delete(tmpFile)
+	end
+
+	it 'makes individually undoable changes'
+		" Require 'undofile' so that changes may be undone after writing the file.
+		set undofile
+		let g:qf_join_changes = 0
+		let tmpFile1 = CreateTmpFile('t/3-lines.txt')
+		let tmpFile2 = CreateTmpFile('t/3-lines.txt')
+		execute 'vimgrep /^/j ' . tmpFile1 . ' ' . tmpFile2
+		copen
+		%substitute/line/Line/
+		write
+		normal gg
+		execute "normal! \<CR>"
+		Expect getline(1) ==# 'Line 1'
+		Expect getline(2) ==# 'Line 2'
+		Expect getline(3) ==# 'Line 3'
+		undo
+		Expect getline(1) ==# 'Line 1'
+		Expect getline(2) ==# 'Line 2'
+		Expect getline(3) ==# 'line 3'
+		cnfile!
+		Expect getline(1) ==# 'Line 1'
+		Expect getline(2) ==# 'Line 2'
+		Expect getline(3) ==# 'Line 3'
+		undo
+		Expect getline(1) ==# 'Line 1'
+		Expect getline(2) ==# 'Line 2'
+		Expect getline(3) ==# 'line 3'
+		call delete(tmpFile1)
+		call delete(tmpFile2)
+	end
+
+	it 'joins changes'
+		set undofile
+		let g:qf_join_changes = 1
+		let tmpFile1 = CreateTmpFile('t/3-lines.txt')
+		let tmpFile2 = CreateTmpFile('t/3-lines.txt')
+		execute 'vimgrep /^/j ' . tmpFile1 . ' ' . tmpFile2
+		copen
+		%substitute/line/Line/
+		write
+		normal gg
+		execute "normal! \<CR>"
+		Expect getline(1) ==# 'Line 1'
+		Expect getline(2) ==# 'Line 2'
+		Expect getline(3) ==# 'Line 3'
+		undo
+		Expect getline(1) ==# 'line 1'
+		Expect getline(2) ==# 'line 2'
+		Expect getline(3) ==# 'line 3'
+		cnfile!
+		Expect getline(1) ==# 'Line 1'
+		Expect getline(2) ==# 'Line 2'
+		Expect getline(3) ==# 'Line 3'
+		undo
+		Expect getline(1) ==# 'line 1'
+		Expect getline(2) ==# 'line 2'
+		Expect getline(3) ==# 'line 3'
+		call delete(tmpFile1)
+		call delete(tmpFile2)
 	end
 
 	function! CreateTmpFile(source)
