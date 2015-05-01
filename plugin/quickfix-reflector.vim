@@ -3,7 +3,7 @@ let s:originalCpo = &cpo
 set cpo&vim
 
 if !exists("g:qf_modifiable")
-  let g:qf_modifiable=1
+  let g:qf_modifiable = 1
 endif
 
 if !exists("g:qf_join_changes")

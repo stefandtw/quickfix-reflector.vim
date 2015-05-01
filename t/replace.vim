@@ -2,8 +2,6 @@ source plugin/quickfix-reflector.vim
 
 describe 'changing quickfix entries'
 	before
-		set noundofile
-		let g:qf_join_changes = 0
 	end
 
 	after
