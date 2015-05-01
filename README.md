@@ -32,10 +32,16 @@ Options
 =======
 
 ```
-let g:qf_modifiable=1
+let g:qf_modifiable = 1
 ```
 If 1, automatically sets quickfix buffers 'modifiable'. If you prefer to do
 this manually, set the value to 0. Default: 1.
+
+```
+let g:qf_join_changes = 1
+```
+If 1, changes within a single buffer will be joined using |:undojoin|, allowing
+them to be undone as a unit.  Default: 0.
 
 
 Links

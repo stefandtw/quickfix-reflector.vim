@@ -3,7 +3,11 @@ let s:originalCpo = &cpo
 set cpo&vim
 
 if !exists("g:qf_modifiable")
-  let g:qf_modifiable=1
+  let g:qf_modifiable = 1
+endif
+
+if !exists("g:qf_join_changes")
+  let g:qf_join_changes = 0
 endif
 
 let s:regexpEngine = '\%#=1'
@@ -130,6 +134,7 @@ function! s:Replace(changes)
 	let switchbufOriginal = &switchbuf
 	let &switchbuf = ''
 	let successfulChanges = 0
+	let bufferHasChanged = {}
 	for change in a:changes
 		let bufferWasListed = buflisted(change.qfEntry.bufnr)
 		execute 'tab sbuffer ' . change.qfEntry.bufnr
@@ -141,10 +146,14 @@ function! s:Replace(changes)
 		let commonInQfAndFile_replacement = commonContext.replacement
 		let isUniqueMatchInLine = s:HasSubstringOnce(getline(change.qfEntry.lnum), commonInQfAndFile)
 		if strlen(commonInQfAndFile) >= 3 && isUniqueMatchInLine
+			if g:qf_join_changes && has_key(bufferHasChanged, change.qfEntry.bufnr)
+				undojoin
+			endif
 			execute change.qfEntry.lnum . 'snomagic/\V' . commonInQfAndFile . '/' . commonInQfAndFile_replacement . '/'
 			write
 			let change.qfEntry.text = change.replacementFromQf
 			let successfulChanges += 1
+			let bufferHasChanged[change.qfEntry.bufnr] = 1
 		else
 			let change.qfEntry.text = substitute(change.qfEntry.text, '^\v(\[ERROR\])?', '[ERROR]', '')
 		endif
