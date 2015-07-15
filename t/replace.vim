@@ -310,6 +310,24 @@ describe 'changing quickfix entries'
 		call delete(tmpFile2)
 	end
 
+	it 'does not write their buffers if option is set'
+		let g:qf_write_changes = 0
+		let tmpFile = CreateTmpFile('t/3-lines.txt')
+		execute 'vimgrep /^/j ' . tmpFile
+		copen
+		1substitute/line 1/Line 1 word/
+		write
+		execute "normal! \<CR>"
+		Expect expand('%:p') ==# tmpFile
+		Expect getline(1) ==# 'Line 1 word'
+		Expect &modified == 1
+		bdelete!
+		execute 'edit ' . tmpFile
+		Expect expand('%:p') ==# tmpFile
+		Expect getline(1) ==# 'line 1'
+		call delete(tmpFile)
+	end
+
 	function! CreateTmpFile(source)
 		let tmpFile = tempname()
 		execute 'edit ' . tmpFile

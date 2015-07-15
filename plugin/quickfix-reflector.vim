@@ -10,6 +10,10 @@ if !exists("g:qf_join_changes")
   let g:qf_join_changes = 0
 endif
 
+if !exists("g:qf_write_changes")
+  let g:qf_write_changes = 1
+endif
+
 let s:regexpEngine = '\%#=1'
 if v:version < 704
 	let s:regexpEngine = ''
@@ -150,15 +154,20 @@ function! s:Replace(changes)
 				undojoin
 			endif
 			execute change.qfEntry.lnum . 'snomagic/\V' . commonInQfAndFile . '/' . commonInQfAndFile_replacement . '/'
-			write
+			if g:qf_write_changes == 1
+				write
+			endif
 			let change.qfEntry.text = change.replacementFromQf
 			let successfulChanges += 1
 			let bufferHasChanged[change.qfEntry.bufnr] = 1
 		else
 			let change.qfEntry.text = substitute(change.qfEntry.text, '^\v(\[ERROR\])?', '[ERROR]', '')
 		endif
-		tabclose
-		if !bufferWasListed
+		if !bufferWasListed && g:qf_write_changes == 0
+			set buflisted
+		endif
+		tabclose!
+		if !bufferWasListed && g:qf_write_changes == 1
 			execute 'silent! bdelete ' . change.qfEntry.bufnr
 		endif
 	endfor
