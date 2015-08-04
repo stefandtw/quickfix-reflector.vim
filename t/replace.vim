@@ -328,6 +328,17 @@ describe 'changing quickfix entries'
 		call delete(tmpFile)
 	end
 
+  it 'works for problematic lines'
+		vimgrep /^/ t/problematic-lines.txt
+		let originalLength = len(getline(1))
+		copen
+		normal AHello
+		write
+		execute "normal! \<CR>"
+		Expect getline(1) =~# '\v^.+Hello.+$'
+		Expect getline(1) =~# '\v^.{' . (originalLength + len('Hello')) . '}$'
+	end 
+
 	function! CreateTmpFile(source)
 		let tmpFile = tempname()
 		execute 'edit ' . tmpFile
