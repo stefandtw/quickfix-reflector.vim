@@ -339,6 +339,22 @@ describe 'changing quickfix entries'
 		Expect getline(1) =~# '\v^.{' . (originalLength + len('Hello')) . '}$'
 	end 
 
+  it 'does not remove space at the start of the line'
+		vimgrep /^/ t/lines-with-space.txt
+		let original1 = getline(1)
+		let original2 = getline(2)
+		let original3 = getline(3)
+		copen
+		normal A:)
+		normal jA:)
+		normal jA:)
+		write
+		execute "normal! \<CR>"
+		Expect getline(1) == original1 . ':)'
+		Expect getline(2) == original2 . ':)'
+		Expect getline(3) == original3 . ':)'
+	end 
+
 	function! CreateTmpFile(source)
 		let tmpFile = tempname()
 		execute 'edit ' . tmpFile

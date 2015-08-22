@@ -85,7 +85,7 @@ function! s:OnWrite()
 			let change = {}
 			let change.qfEntry = entry
 			let changeMatchList = matchlist(getline(lineNumberForChange), entry.markerPatternForChanges)
-			let change.originalFromQf = qfDescription . matchList[2]
+			let change.originalFromQf = qfDescriptionTrimmed . matchList[2]
 			let change.replacementFromQf = changeMatchList[2]
 			call add(changes, change)
 		endif
