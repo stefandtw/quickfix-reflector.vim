@@ -22,14 +22,19 @@ endif
 augroup quickfix_reflector
 	autocmd!
 	autocmd BufReadPost quickfix nested :call <SID>OnQuickfixInit()
-	autocmd BufWriteCmd quickfix-* :call <SID>OnWrite()
 augroup END
 
 function! s:OnQuickfixInit()
+	if &filetype !=# 'qf'
+		return
+	endif
+	execute 'augroup quickfix_reflector_' . bufnr('%')
+		autocmd!
+		execute 'autocmd BufWriteCmd quickfix-' . bufnr('%') . ' :call <SID>OnWrite()'
+	augroup END
 	" Set a file name for the buffer. This makes it possible to write the
 	" buffer using :w, :x and other built-in commands.
 	execute 'write! quickfix-' .  bufnr('%')
-
 	call s:PrepareBuffer()
 endfunction
 
