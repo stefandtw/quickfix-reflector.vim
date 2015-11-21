@@ -79,6 +79,16 @@ describe 'the quickfix window'
 		Expect getline(7) ==# 'issue5/c.out|15| some text here'
 	end 
 
+	it 'opens without error if nowrite is used'
+		set nowrite
+		vimgrep /^/ t/problematic-lines.txt
+
+		copen
+
+		" no errors
+		Expect &modifiable == 0
+	end
+
 end
 
 " vim:ts=2:sw=2:sts=2

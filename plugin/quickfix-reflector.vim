@@ -25,7 +25,7 @@ augroup quickfix_reflector
 augroup END
 
 function! s:OnQuickfixInit()
-	if &filetype !=# 'qf'
+	if &filetype !=# 'qf' || !&write
 		return
 	endif
 	execute 'augroup quickfix_reflector_' . bufnr('%')
