@@ -64,8 +64,8 @@ function! s:OnWrite()
 		" the entry again after it has changed
 		" 
 		" Vim sometimes does not display the full line if it's very long
-		if strlen(entry.text) > 180
-			let qfDescription = strpart(entry.text, 0, 180)
+		if strchars(entry.text) > 180
+			let qfDescription = matchstr(entry.text, '\v.{180}')
 		else
 			let qfDescription = entry.text
 		endif

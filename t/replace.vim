@@ -330,13 +330,17 @@ describe 'changing quickfix entries'
 
   it 'works for problematic lines'
 		vimgrep /^/ t/problematic-lines.txt
-		let originalLength = len(getline(1))
+		let originalLength1 = strchars(getline(1))
+		let originalLength2 = strchars(getline(2))
 		copen
 		normal AHello
+		normal jAHello
 		write
 		execute "normal! \<CR>"
 		Expect getline(1) =~# '\v^.+Hello.+$'
-		Expect getline(1) =~# '\v^.{' . (originalLength + len('Hello')) . '}$'
+		Expect getline(1) =~# '\v^.{' . (originalLength1 + len('Hello')) . '}$'
+		Expect getline(2) =~# '\v^.+Hello$'
+		Expect getline(2) =~# '\v^.{' . (originalLength2 + len('Hello')) . '}$'
 	end 
 
   it 'does not remove space at the start of the line'
