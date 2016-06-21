@@ -326,10 +326,12 @@ describe 'changing quickfix entries'
 		Expect expand('%:p') ==# tmpFile
 		Expect getline(1) ==# 'line 1'
 		call delete(tmpFile)
+		let g:qf_write_changes = 1
 	end
 
   it 'works for problematic lines'
-		vimgrep /^/ t/problematic-lines.txt
+		let tmpFile = CreateTmpFile('t/problematic-lines.txt')
+		execute 'vimgrep /^/ ' . tmpFile
 		let originalLength1 = strchars(getline(1))
 		let originalLength2 = strchars(getline(2))
 		copen
@@ -344,7 +346,8 @@ describe 'changing quickfix entries'
 	end 
 
   it 'does not remove space at the start of the line'
-		vimgrep /^/ t/lines-with-space.txt
+		let tmpFile = CreateTmpFile('t/lines-with-space.txt')
+		execute 'vimgrep /^/ ' . tmpFile
 		let original1 = getline(1)
 		let original2 = getline(2)
 		let original3 = getline(3)
@@ -357,6 +360,22 @@ describe 'changing quickfix entries'
 		Expect getline(1) == original1 . ':)'
 		Expect getline(2) == original2 . ':)'
 		Expect getline(3) == original3 . ':)'
+	end 
+
+
+  it 'triggers QfReplacementBufWritePost'
+		let tmpFile1 = CreateTmpFile('t/3-lines.txt')
+		let tmpFile2 = CreateTmpFile('t/3-lines.txt')
+		execute 'vimgrep /^line 1/ ' . tmpFile1 . ' ' . tmpFile2
+		let g:triggered = 0
+		autocmd User QfReplacementBufWritePost :let g:triggered += 1
+		copen
+		normal A:)
+		normal jA:)
+		write
+		Expect g:triggered == 2
+		call delete(tmpFile1)
+		call delete(tmpFile2)
 	end 
 
 	function! CreateTmpFile(source)

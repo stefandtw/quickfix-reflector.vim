@@ -52,6 +52,22 @@ to preview the changes before writing the individual buffers yourself.
 Default: 1
 
 
+Events
+======
+
+Custom events can be used like this:
+```
+autocmd User <event> :echo 'do something'
+```
+If you prefer, you can redirect a custom event using regular Vim events. Example:
+```
+autocmd User QfReplacementBufWritePost doautocmd BufWritePost
+```
+
+Implemented events:
+* `QfReplacementBufWritePost` This event is sent after making a replacement and writing the corresponding buffer.
+
+
 Links
 =====
 

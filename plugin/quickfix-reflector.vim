@@ -161,6 +161,7 @@ function! s:Replace(changes)
 			execute change.qfEntry.lnum . 'snomagic/\V' . commonInQfAndFile . '/' . commonInQfAndFile_replacement . '/'
 			if g:qf_write_changes == 1
 				write
+				doautocmd User QfReplacementBufWritePost
 			endif
 			let change.qfEntry.text = change.replacementFromQf
 			let successfulChanges += 1
