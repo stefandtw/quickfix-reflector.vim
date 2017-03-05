@@ -378,6 +378,25 @@ describe 'changing quickfix entries'
 		call delete(tmpFile2)
 	end 
 
+	it 'does not mind open tabs'
+		tabnew
+		tabnew
+		tabprevious
+		let tmpFile = CreateTmpFile('t/3-lines.txt')
+		execute 'vimgrep /^/j ' . tmpFile
+		copen
+		1substitute/line 1/line 1 word/
+		write
+		Expect &modified == 0
+		execute "normal! \<CR>"
+		Expect expand('%:p') ==# tmpFile
+		Expect getline(1) ==# 'line 1 word'
+		Expect getline(2) ==# 'line 2'
+		Expect getline(3) ==# 'line 3'
+		Expect &modified == 0
+		call delete(tmpFile)
+	end
+
 	function! CreateTmpFile(source)
 		let tmpFile = tempname()
 		execute 'edit ' . tmpFile
