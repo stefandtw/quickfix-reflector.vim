@@ -14,6 +14,7 @@ Details
 * The usual write commands can be used (`:w`, `:x` etc.), but they won't save the buffer to a file. Instead they will trigger replacement for any changes you made.
 * If you specifically want to save the quickfix buffer to a file, you can still do that the same way as before `:write my_qf_list`
 * Adding and removing lines in the quickfix buffer breaks each line's link to Vim's internal quickfix entry. After making such changes, you need to write the quickfix buffer. This will rewrite Vim's internal quickfix list. Otherwise, pressing `<Enter>` may jump to the wrong entry.
+* If you like to use `:caddexpr` or similar partial updates to the quickfix list, you need re-initialize the quickfix buffer before it can be saved. The easiest way is to `:copen` again. See issue #25.
 
 
 Limits to text replacement

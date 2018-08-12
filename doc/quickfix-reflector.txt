@@ -29,6 +29,9 @@ then use `%s/foo/bar` (or anything else) on the rest.
   Vim's internal quickfix entry. After making such changes, you need to write
   the quickfix buffer. This will rewrite Vim's internal quickfix list.
   Otherwise, pressing `<Enter>` may jump to the wrong entry.
+* If you like to use `:caddexpr` or similar partial updates to the quickfix
+  list, you need re-initialize the quickfix buffer before it can be saved. The
+  easiest way is to `:copen` again. See issue #25.
 
 
 3. Limits to text replacement			*quickfix-reflector-error*
