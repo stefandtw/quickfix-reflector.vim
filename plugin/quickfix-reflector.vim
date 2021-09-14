@@ -24,7 +24,7 @@ augroup quickfix_reflector
 	autocmd BufReadPost quickfix nested :call <SID>OnQuickfixInit()
 augroup END
 
-function! s:OnQuickfixInit()
+function! s:OnQuickfixInit() abort
 	if &filetype !=# 'qf' || !&write
 		return
 	endif
@@ -38,14 +38,14 @@ function! s:OnQuickfixInit()
 	call s:PrepareBuffer()
 endfunction
 
-function! s:PrepareBuffer()
+function! s:PrepareBuffer() abort
 	if g:qf_modifiable == 1
 	  setlocal modifiable
 	endif
 	let s:qfBufferLines = getline(1, '$')
 endfunction
 
-function! s:OnWrite()
+function! s:OnWrite() abort
 	if !&modified
 		return
 	endif
@@ -119,7 +119,7 @@ function! s:OnWrite()
 	call s:PrepareBuffer()
 endfunction
 
-function! s:getQfOrLocationList(isLocationList, winNumber)
+function! s:getQfOrLocationList(isLocationList, winNumber) abort
 	if a:isLocationList
 		return getloclist(a:winNumber)
 	else
@@ -127,7 +127,7 @@ function! s:getQfOrLocationList(isLocationList, winNumber)
 	end
 endfunction
 
-function! s:setQfOrLocationList(entries, isLocationList, winNumber)
+function! s:setQfOrLocationList(entries, isLocationList, winNumber) abort
 	if a:isLocationList
 		call setloclist(a:winNumber, a:entries)
 	else
@@ -135,11 +135,11 @@ function! s:setQfOrLocationList(entries, isLocationList, winNumber)
 	end
 endfunction
 
-function! s:CompareEntryInBuffer(qfEntry1, qfEntry2)
+function! s:CompareEntryInBuffer(qfEntry1, qfEntry2) abort
 	return a:qfEntry1.lineNumber - a:qfEntry2.lineNumber
 endfunction
 
-function! s:Replace(changes)
+function! s:Replace(changes) abort
 	let switchbufOriginal = &switchbuf
 	let &switchbuf = ''
 	let successfulChanges = 0
@@ -190,7 +190,7 @@ function! s:Replace(changes)
 	endif
 endfunction
 
-function! s:FindCommonContext(qfOriginal, qfChangedVersion, lineInFile)
+function! s:FindCommonContext(qfOriginal, qfChangedVersion, lineInFile) abort
 	let startOfChange = 0
 	let endOfChange = 0
 	let endOfChangeInChangedVersion = 0
@@ -248,11 +248,11 @@ function! s:FindCommonContext(qfOriginal, qfChangedVersion, lineInFile)
 		\ }
 endfunction
 
-function! s:HasSubstringOnce(string, escapedSubstring)
+function! s:HasSubstringOnce(string, escapedSubstring) abort
 	return a:string =~# '\V' . a:escapedSubstring . '\(\.\*' . a:escapedSubstring . '\)\@\!'
 endfunction
 
-function! s:StringRange(string, startIndex, endIndex)
+function! s:StringRange(string, startIndex, endIndex) abort
 	return strpart(a:string, a:startIndex, a:endIndex - a:startIndex + 1)
 endfunction
 
