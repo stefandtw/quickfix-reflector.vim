@@ -3,15 +3,15 @@ let s:originalCpo = &cpo
 set cpo&vim
 
 if !exists("g:qf_modifiable")
-  let g:qf_modifiable = 1
+	let g:qf_modifiable = 1
 endif
 
 if !exists("g:qf_join_changes")
-  let g:qf_join_changes = 0
+	let g:qf_join_changes = 0
 endif
 
 if !exists("g:qf_write_changes")
-  let g:qf_write_changes = 1
+	let g:qf_write_changes = 1
 endif
 
 let s:regexpEngine = '\%#=1'
