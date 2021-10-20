@@ -49,6 +49,10 @@ function! s:OnWrite() abort
 	if !&modified
 		return
 	endif
+	if empty(s:qfBufferLines)
+		echoerr "quickfix_reflector not initialized in this buffer (empty). Try :copen again."
+		return
+	endif
 	let qfBufferLines = copy(s:qfBufferLines)
 	let isLocationList = len(getloclist(0)) > 0
 	let qfWinNumber = winnr()
@@ -76,7 +80,14 @@ function! s:OnWrite() abort
 		" If there are multiple entries with the same description text we only
 		" want to use an entry once. So remove the matched line from the
 		" bufferLines we search through.
-		call remove(qfBufferLines, index(qfBufferLines, matchList[0]))
+		let matched_lnum = index(qfBufferLines, matchList[0])
+		if matched_lnum < 0
+			" mismatch maybe means we failed to init.
+			echoerr "quickfix_reflector not initialized in this buffer (mismatch). Try :copen again."
+			return
+		endif
+		
+		call remove(qfBufferLines, matched_lnum)
 		" Make a search pattern that will find a changed version of the line
 		let entry.markerPattern = '\C\V\^' . escape(matchList[1], '/\')
 		if entry.valid == 0
